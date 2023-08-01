@@ -72,5 +72,5 @@ Fast editing =user-init-file=
   (use-package link-hint)
 
   (cz/leader-keys
-    "f" 'link-hint-open-link)
+    "fl" 'link-hint-open-link)
 #+end_src

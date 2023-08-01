@@ -12,6 +12,10 @@
 
   (use-package projectile-ripgrep)
 
+  (defun cz/get-project-root ()
+    (when (fboundp 'projectile-project-root)
+      (projectile-project-root)))
+
   (cz/leader-keys
     "p" 'projectile-command-map)
 #+end_src

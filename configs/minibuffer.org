@@ -8,11 +8,28 @@ Currently, I'm exploring the option provided by Minad.
 - Consult
 - Orderless
 
-* TODO
-- [ ] Completed minibuffer setup
-- [ ] Shortcut key setup
-- [ ] Project management?
+* Marginalia
 
+#+begin_src emacs-lisp
+  (use-package marginalia
+    :after vertico
+    :general
+    (:keymaps 'minibuffer-local-map
+              "M-A" 'marginalia-cycle)
+    :custom
+    (marginalia-max-relative-age 0)
+    (marginalia-align 'right)
+    :init
+    (marginalia-mode))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package all-the-icons-completion
+    :after (marginalia all-the-icons)
+    :hook (marginalia-mode . all-the-icons-completion-marginalia-setup)
+    :init
+    (all-the-icons-completion-mode))
+#+end_src
 
 * Vertico
 
@@ -44,35 +61,14 @@ Currently, I'm exploring the option provided by Minad.
 #+end_src
 
 
-* Marginalia
-
-#+begin_src emacs-lisp
-  (use-package marginalia
-    :general
-    (:keymaps 'minibuffer-local-map
-              "M-A" 'marginalia-cycle)
-    :custom
-    (marginalia-max-relative-age 0)
-    (marginalia-align 'right)
-    :init
-    (marginalia-mode))
-#+end_src
-
-#+begin_src emacs-lisp
-  (use-package all-the-icons-completion
-    :after (marginalia all-the-icons)
-    :hook (marginalia-mode . all-the-icons-completion-marginalia-setup)
-    :init
-    (all-the-icons-completion-mode))
-#+end_src
-
 * Orderless
 
 #+begin_src emacs-lisp
   (use-package orderless
     :custom
-    (completion-styles '(substring basic))
-    (completion-category-defaults nil))
+    (completion-styles '(substring orderless basic))
+    (completion-category-defaults nil)
+    (completion-category-overrides '((file (styles . (partial-completion))))))
 #+end_src
 
 
@@ -83,17 +79,28 @@ Quick search shortcuts
 Preview is disabled for =consult-buffer= to avoid strange issues with the minibuffer.
 
 #+begin_src emacs-lisp
-  (use-package consult)
+  (use-package consult
+    :demand t
+    :custom
+    (consult-project-root-function #'cz/get-project-root)
+    :config
+    (consult-preview-at-point-mode))
 #+end_src
 
 
 keymaps
 
 #+begin_src emacs-lisp
+  (defun cz/search-config-files ()
+    "Grep within user config directory using `rg'."
+    (interactive)
+    (consult-git-grep user-emacs-directory))
 
   (general-define-key "C-s" 'consult-line)
   (cz/leader-keys
     "bb" 'consult-buffer
+
+    "ecg" 'cz/search-config-files
 
     ; toggle settings
     "tt" 'consult-theme

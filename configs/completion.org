@@ -1,0 +1,89 @@
+#+TITLE: Completion setup
+#+AUTHOR: Wenhan Zhu
+
+* Corfu
+
+#+begin_src emacs-lisp
+  (use-package corfu
+    :demand t
+    :bind (:map corfu-map
+                ([tab] . corfu-next)
+                ([backtab] . corfu-previous)
+                ("S-<return>" . corfu-insert)
+                ("RET" . nil)
+                ([remap move-end-of-line] . nil))
+    :init
+    (global-corfu-mode)
+    :config
+    (setq corfu-auto t)
+    (setq corfu-auto-prefix 1)
+    (setq corfu-auto-delay 0.3)
+    (setq corfu-preselect 'prompt)
+    (setq corfu-on-exact-match nil)
+    (setq corfu-quit-no-match 'separator))
+
+  (use-package kind-icon
+    :after corfu
+    :custom
+    (kind-icon-default-face 'corfu-default)
+    :config
+    (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)
+    (when cz/windows-p
+      (plist-put kind-icon-default-style :height 0.8)))
+
+  (use-package cape
+    :init
+    (add-to-list 'completion-at-point-functions #'cape-file)
+    (add-to-list 'completion-at-point-functions #'cape-dabbrev))
+
+  (use-package emacs
+    :init
+    (setq completion-cycle-threshold 3)
+    (setq tab-always-indent 'complete))
+#+end_src
+
+
+* Snippets
+
+#+begin_src emacs-lisp
+  (use-package yasnippet
+    :config
+    (yas-global-mode 1))
+
+
+  ;; snippet sources
+  (use-package yasnippet-snippets
+    :defer t
+    :after yasnippet)
+
+  ;; cape integration
+  (use-package cape-yasnippet
+    :straight (cape-yasnippet :type git
+                              :host github
+                              :repo "elken/cape-yasnippet")
+    :config
+    (add-to-list 'completion-at-point-functions #'cape-yasnippet))
+
+  (cz/leader-keys
+    "yt" 'yas-describe-tables
+    "yi" 'yas-insert-snippet
+    "yf" 'yas-visit-snippet-file)
+#+end_src
+
+
+* LSP
+
+#+begin_src emacs-lisp
+  (use-package eglot
+    :defer t
+    :config
+    (setq read-process-output-max (* 1024 1024))
+    (setq eglot-events-buffer-size 0)
+    (setq completion-category-overrides '((elgot (styles . (orderless flex))))))
+
+  (cz/leader-keys
+    "la" 'eglot-code-actions
+    "lr" 'eglot-rename
+    "lf" 'eglot-format
+    "ld" 'eldoc)
+#+end_src

@@ -12,7 +12,9 @@ Settings related to enhancing the functionality of emacs. Mostly misc configurat
     (setq no-littering-var-directory (expand-file-name "var/" user-emacs-directory))
     :custom
     (auto-save-file-name-transforms
-     `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
+     `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+    :config
+    (no-littering-theme-backups))
 #+end_src
 
 * Better Undo

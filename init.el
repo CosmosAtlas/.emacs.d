@@ -4,6 +4,8 @@
 ;; Startup Configuration
 ;;
 
+(setq gc-cons-threshold (* 50 1000 1000))
+
 ;; remove useless UI
 (when window-system
   (scroll-bar-mode -1)
@@ -59,7 +61,9 @@
 (org-babel-load-file (expand-file-name "configs/org.org" user-emacs-directory))
 (org-babel-load-file (expand-file-name "configs/minibuffer.org" user-emacs-directory))
 (org-babel-load-file (expand-file-name "configs/behavior-enhancements.org" user-emacs-directory))
-
+(org-babel-load-file (expand-file-name "configs/project-management.org" user-emacs-directory))
+(org-babel-load-file (expand-file-name "configs/completion.org" user-emacs-directory))
+(org-babel-load-file (expand-file-name "configs/magit.org" user-emacs-directory))
 
 ;; managing custom files
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))

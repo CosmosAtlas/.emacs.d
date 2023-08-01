@@ -17,7 +17,7 @@ Setup Evil mode at beginning to ease the process
     (evil-mode 1)
     (evil-set-undo-system 'undo-redo)
 
-    (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+    ;; (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
     (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
 
     (evil-global-set-key 'motion "j" 'evil-next-visual-line)

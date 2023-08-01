@@ -37,6 +37,16 @@ Refile limits
   (setq org-log-done 'time)
 #+end_src
 
+* Enable templates
+
+#+begin_src emacs-lisp
+  (require 'org-tempo)
+
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("sh" . "src emacs-lisp"))
+#+end_src
+
+
 * indent
 
 #+begin_src emacs-lisp
@@ -48,6 +58,8 @@ Refile limits
     :after org-modern
     :config
     (add-hook 'org-mode-hook #'org-modern-indent-mode 90))
+
+  (add-hook 'org-mode-hook (lambda () (setq evil-auto-indent nil)))
 #+end_src
 
 
