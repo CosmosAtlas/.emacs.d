@@ -63,6 +63,7 @@
 (org-babel-load-file (expand-file-name "configs/behavior-enhancements.org" user-emacs-directory))
 (org-babel-load-file (expand-file-name "configs/project-management.org" user-emacs-directory))
 (org-babel-load-file (expand-file-name "configs/completion.org" user-emacs-directory))
+(org-babel-load-file (expand-file-name "configs/misc-lang.org" user-emacs-directory))
 (org-babel-load-file (expand-file-name "configs/magit.org" user-emacs-directory))
 
 ;; managing custom files

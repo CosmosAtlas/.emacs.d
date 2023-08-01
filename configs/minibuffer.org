@@ -103,7 +103,7 @@ keymaps
     "ecg" 'cz/search-config-files
 
     ; toggle settings
-    "tt" 'consult-theme
+    "tc" 'consult-theme
     "tn" 'display-line-numbers-mode)
 #+end_src
 
