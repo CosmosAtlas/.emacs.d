@@ -1,0 +1,122 @@
+#+TITLE: Minibuffer Setup
+#+AUTHOR: Wenhan Zhu
+
+Currently, I'm exploring the option provided by Minad.
+
+- Vertico
+- Marginalia
+- Consult
+- Orderless
+
+* TODO
+- [ ] Completed minibuffer setup
+- [ ] Shortcut key setup
+- [ ] Project management?
+
+
+* Vertico
+
+#+begin_src emacs-lisp
+  ;; allow case insensitive matching
+  (setq read-file-name-completion-ignore-case t
+      read-buffer-completion-ignore-case t
+      completion-ignore-case t)
+  (use-package vertico
+    :demand t   ; to load immediately
+    :straight (vertico :files (:defaults "extensions/*")
+                       :includes (verticle-reverse
+                                  verticle-directory))
+    :custom
+    (vertico-count 13)
+    (vertico-resize t)
+    (vertico-cycle nil)
+    :general
+    (:keymaps 'vertico-map
+              "<tab>" #'vertico-insert  ; insert selected candidate into text area
+              "<backspace>" #'vertico-directory-delete-char
+              "RET" #'vertico-directory-enter
+              "C-w" #'vertico-directory-delete-word)
+    :hook ((rfn-eshadow-update-overlay . vertico-directory-tidy)
+           (minibuffer-setup . vertico-repeat-save))
+    :config
+    (vertico-mode)
+    (vertico-reverse-mode))
+#+end_src
+
+
+* Marginalia
+
+#+begin_src emacs-lisp
+  (use-package marginalia
+    :general
+    (:keymaps 'minibuffer-local-map
+              "M-A" 'marginalia-cycle)
+    :custom
+    (marginalia-max-relative-age 0)
+    (marginalia-align 'right)
+    :init
+    (marginalia-mode))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package all-the-icons-completion
+    :after (marginalia all-the-icons)
+    :hook (marginalia-mode . all-the-icons-completion-marginalia-setup)
+    :init
+    (all-the-icons-completion-mode))
+#+end_src
+
+* Orderless
+
+#+begin_src emacs-lisp
+  (use-package orderless
+    :custom
+    (completion-styles '(substring basic))
+    (completion-category-defaults nil))
+#+end_src
+
+
+* Consult
+
+Quick search shortcuts
+
+Preview is disabled for =consult-buffer= to avoid strange issues with the minibuffer.
+
+#+begin_src emacs-lisp
+  (use-package consult)
+#+end_src
+
+
+keymaps
+
+#+begin_src emacs-lisp
+
+  (general-define-key "C-s" 'consult-line)
+  (cz/leader-keys
+    "bb" 'consult-buffer
+
+    ; toggle settings
+    "tt" 'consult-theme
+    "tn" 'display-line-numbers-mode)
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package consult-org-roam
+    :after org-roam
+    :init
+    (require 'consult-org-roam)
+    (consult-org-roam-mode 1)
+    :custom
+    (consult-org-roam-grep-func #'consult-ripgrep)
+    (consult-org-roam-buffer-narrow-key ?r)
+    (consult-org-roam-buffer-after-buffers t)
+    :config
+    (consult-customize
+     consult-org-roam-forward-links
+     :preview-key (kbd "M-.")))
+
+
+  (cz/leader-keys
+    "zf" 'consult-org-roam-file-find
+    "zg" 'consult-org-roam-search)
+#+end_src

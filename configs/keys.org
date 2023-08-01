@@ -1,0 +1,76 @@
+#+TITLE: Key bindings and etc.
+#+AUTHOR: Wenhan Zhu
+
+Managing keybindings.
+
+* Which key
+
+#+begin_src emacs-lisp
+  (use-package which-key
+    :defer 0
+    :diminish which-key-mode
+    :config
+    (which-key-mode)
+    (setq which-key-idle-delay 0.3))
+#+end_src
+
+* General
+
+#+begin_src emacs-lisp
+  (use-package general
+    :config
+    (general-create-definer cz/leader-keys
+                            :keymaps '(normal insert visual emacs)
+                            :prefix "SPC"
+                            :global-prefix "C-SPC"))
+#+end_src
+
+
+Fast editing =user-init-file=
+#+begin_src emacs-lisp
+  (defun cz/edit-user-init-file ()
+    "Edit the `user-init-file'"
+    (interactive)
+    (find-file user-init-file))
+
+  (cz/leader-keys
+    "ed" 'cz/edit-user-init-file)
+#+end_src
+
+
+* Hydra
+
+#+begin_src emacs-lisp
+  (use-package hydra)
+#+end_src
+
+** Frame zoom in/out
+
+#+begin_src emacs-lisp
+  (straight-use-package 'frame-fns)
+  (straight-use-package 'frame-cmds)
+  (straight-use-package 'zoom-frm)
+  (require 'frame-fns)
+  (require 'frame-cmds)
+  (require 'zoom-frm)
+
+  (defhydra hydra-text-scale (:timeout 4)
+    "scale text"
+    ("j" zoom-in "in")
+    ("k" zoom-out "out")
+    ("r" (zoom-in/out 0) "reset")
+    ("f" nil "finished" :exit t))
+
+  (cz/leader-keys
+    "ts" '(hydra-text-scale/body :which-key "scale text"))
+#+end_src
+
+
+* Link hinting
+
+#+begin_src emacs-lisp
+  (use-package link-hint)
+
+  (cz/leader-keys
+    "f" 'link-hint-open-link)
+#+end_src

@@ -1,0 +1,74 @@
+#+TITLE: Emacs Buil-in Configurations
+#+AUTHOR: Wenhan Zhu
+
+This file contains configurations that are largely built-in emacs.
+
+* Disable all bells
+
+#+begin_src emacs-lisp
+  (setq visible-bell nil)
+  (setq ring-bell-function 'ignore)
+#+end_src
+
+
+* Scrolling
+
+#+begin_src emacs-lisp
+  (setq scroll-margin 2)
+#+end_src
+
+* Highlight current line
+
+#+begin_src emacs-lisp
+  ;; highlight current line
+  (global-hl-line-mode 1)
+#+end_src
+
+* Emacs tab and space management
+
+#+begin_src emacs-lisp
+  (setq-default tab-width 2)
+  (setq-default evil-shift-width tab-width)
+  ;; spaces always
+  (setq-default indent-tabs-mode nil)
+#+end_src
+
+* Rebind keys
+
+#+begin_src emacs-lisp
+  ;; use ESC to quit stuff
+  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+  ;; use C-M-u as alternative to C-u since evil took that keybind
+  (global-set-key (kbd "C-M-u") 'universal-argument)
+#+end_src
+
+* Display numbers
+
+#+begin_src emacs-lisp
+  ;; line num
+  (column-number-mode)
+  (global-display-line-numbers-mode t)
+  (dolist (mode '(term-mode-hook
+                  eshell-mode-hook))
+    (add-hook mode (lambda () (display-line-numbers-mode 0))))
+#+end_src
+
+
+* Enable line wraping
+
+#+begin_src emacs-lisp
+  ;; line wraping
+  (global-visual-line-mode 1)
+#+end_src
+
+* Auto reload file on disk when change
+
+#+begin_src emacs-lisp
+  (global-auto-revert-mode)
+#+end_src
+
+* Setting up shell on windows
+
+#+begin_src emacs-lisp
+  (setq w32-allow-system-shell t)
+#+end_src

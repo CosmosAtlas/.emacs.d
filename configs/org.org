@@ -1,0 +1,235 @@
+#+TITLE: Org Setup
+#+AUTHOR: Wenhan Zhu
+
+Org-mode related setup
+
+* Org basic settings
+
+Set up org directory location
+#+begin_src emacs-lisp
+  (when cz/windows-p
+    (setq org-directory (format "C:/Users/%s/org" user-login-name)))
+
+  (when cz/linux-p
+    (setq org-directory "~/org"))
+#+end_src
+
+Agenda files
+#+begin_src emacs-lisp
+  (setq org-agenda-files (list (concat org-directory "/gtd.org")
+                               (concat org-directory "/misc.org")
+                               (concat org-directory "/done.org")
+                               (concat org-directory "/inbox.org")))
+#+end_src
+
+Refile limits
+
+#+begin_src emacs-lisp
+  (setq org-refile-targets
+        '((nil :maxlevel . 3)
+          (org-agenda-files :maxlevel . 3)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (setq org-capture-templates
+   `(("i" "inbox" entry (file+headline ,(concat org-directory "/inbox.org") "Tasks") "** TODO %?")))
+  ;; Add time to closing items
+  (setq org-log-done 'time)
+#+end_src
+
+* indent
+
+#+begin_src emacs-lisp
+  (setq org-startup-indented t)
+  (use-package org-modern-indent
+    :straight (org-modern-indent :type git
+                                 :host github
+                                 :repo "jdtsmith/org-modern-indent")
+    :after org-modern
+    :config
+    (add-hook 'org-mode-hook #'org-modern-indent-mode 90))
+#+end_src
+
+
+* Aligning tags
+
+Aligning tags on the right can be fancy, but current solutions are not very good and causes issues.
+For example, performance hits, and also incompatibilities with =consult= previews.
+
+[[https://www.reddit.com/r/emacs/comments/10h8htf/when_using_consultbuffer_minibuffer_sometimes/][Reddit - When using consult buffer minibuffer sometimes]]
+
+[[https://emacs.stackexchange.com/questions/10087/how-to-better-align-tags-in-org-mode-using-variable-width-font/75538#75538][How to better align tags in Org Mode using variable-width font - Emacs Stack ...]]
+
+* Org modern style
+#+begin_src emacs-lisp
+  (modify-all-frames-parameters
+   '((right-divider-width . 40)
+     (internal-border-width . 40)))
+  (dolist (face '(window-divider
+                  window-divider-first-pixel
+                  window-divider-last-pixel))
+    (face-spec-reset-face face)
+    (set-face-foreground face (face-attribute 'default :background)))
+  (set-face-background 'fringe (face-attribute 'default :background))
+  (use-package org-modern
+    :after org
+    :config
+    ;; (set-face-attribute 'variable-pitch nil :family "Iosevka Etoile")
+    (set-face-attribute 'org-modern-symbol nil :family "Iosevka")
+    (setq
+     org-auto-align-tags nil
+     org-tags-column 0
+     org-catch-invisible-edits 'show-and-error
+     org-special-ctrl-a/e t
+     org-insert-heading-respect-content t
+
+     org-hide-emphasis-markers t
+     org-pretty-entities t
+     org-ellipsis "…"
+
+     org-agenda-tags-column 0
+     org-agenda-block-separator ?-
+     org-agenda-time-grid
+     '((daily today require-timed)
+       (800 1000 1200 1400 1600 1800 2000)
+       " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄")
+     org-agenda-current-time-string
+     "< now ─────────────────────────────────────────────────")
+    (global-org-modern-mode))
+#+end_src
+
+* Variable Pitch
+#+begin_src emacs-lisp
+  (use-package mixed-pitch
+    :after org-modern
+    :hook
+    (org-mode . mixed-pitch-mode))
+#+end_src
+
+
+* Show raw input when on selected line
+
+#+begin_src emacs-lisp
+  (use-package org-appear
+    :straight (org-appear :type git
+                          :host github
+                          :repo "awth13/org-appear")
+    :after org
+    :config
+    (setq org-link-descriptive t)
+    (setq org-appear-autolinks t)
+    :hook (org-mode . org-appear-mode))
+#+end_src
+
+* Pasting links automatically with title
+
+#+begin_src emacs-lisp
+  (use-package org-cliplink)
+#+end_src
+
+* Visually filling
+
+#+begin_src emacs-lisp
+  (defun cz/org-mode-visual-fill ()
+    (setq visual-fill-column-width 100
+          visual-fill-column-center-text t)
+    (visual-fill-column-mode 1))
+
+  (use-package visual-fill-column
+    :hook
+    (org-mode . cz/org-mode-visual-fill))
+#+end_src
+
+* Org roam for knowledge management
+
+Setting up emacsql backend
+
+#+begin_src emacs-lisp
+  (use-package emacsql
+    :straight (emacsql :type git
+                       :host github
+                       :repo "magit/emacsql"))
+  #+end_src
+
+#+begin_src emacs-lisp
+  (use-package org-roam
+    :after org
+    :defer t
+    :config
+    (setq org-roam-directory
+  	      (file-truename (concat org-directory "/org-roam-test")))
+    (setq org-roam-completion-everywhere t)
+    (setq org-roam-node-display-template "${title:*} [${tags:10}]")
+    (setq org-roam-mode-sections (list #'org-roam-backlinks-section #'org-roam-reflinks-section))
+    (setq org-roam-dailies-directory "weekly/")
+    (setq org-roam-dailies-capture-templates
+          '(("d" "default" entry "** %?" :if-new
+             (file+head+olp "%<%G-W%V>.org" "#+title: %<%G-W%V>\n"
+                            ("%<%A %Y-%m-%d>")))))
+    (setq org-roam-capture-templates
+          '(("d" "default" plain "%?"
+             :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                                "#+title: ${title}\n")
+             :unnarrowed t)
+            ("r" "bibliography reference" plain "%?"
+             :target
+             (file+head "references/${citekey}.org" "#+title: ${title}\n")
+             :unnarrowed t)))
+    ;; display buffer
+    (add-to-list 'display-buffer-alist
+                 '("\\*org-roam\\*"
+                   (display-buffer-in-direction)
+                   (direction . right)
+                   (window-width . 0.33)
+                   (window-height . fit-window-to-buffer)))
+    ;; run sync at startup
+    (org-roam-db-autosync-mode))
+#+end_src
+
+
+* Setting up relevant keybindings
+
+Org mode specific
+#+begin_src emacs-lisp
+  (cz/leader-keys
+    :states 'normal
+    :keymaps 'org-mode-map
+    "zi" 'org-roam-node-insert
+    "zb" 'org-roam-buffer-toggle
+    "zl" 'org-cliplink
+    "zt" 'org-roam-tag-add)
+#+end_src
+
+Use org-mode in global
+#+begin_src emacs-lisp
+  (defun cz/edit-org-inbox-file ()
+    "Edit the inbox file in org"
+    (interactive)
+    (find-file (file-truename (concat org-directory "/inbox.org"))))
+
+  (defun cz/edit-org-gtd-file ()
+    "Edit the inbox file in org"
+    (interactive)
+    (find-file (file-truename (concat org-directory "/gtd.org"))))
+
+  (cz/leader-keys
+    ;; quick org file edits
+    "eoi" 'cz/edit-org-inbox-file
+    "eog" 'cz/edit-org-gtd-file
+
+    ;; org agenda
+    "oa" 'org-agenda
+    "oc" 'org-capture
+
+    ;; org-roam zettelkanstan
+    ;; "zf" 'org-roam-node-find  ; using consult-org-roam
+    "zc" 'org-roam-capture
+    "zd" 'org-roam-dailies-goto-today)
+#+end_src
+
+Insert mode specials
+
+#+begin_src emacs-lisp
+  (evil-define-key 'insert 'org-mode-map (kbd "C-c il") 'org-cliplink)
+  (evil-define-key 'insert 'org-mode-map (kbd "C-c ii") 'org-roam-node-insert)
+#+end_src

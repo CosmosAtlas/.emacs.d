@@ -1,0 +1,91 @@
+#+TITLE: Evil setup
+#+AUTHOR: Wenhan Zhu
+
+Setup Evil mode at beginning to ease the process
+
+* Evil basic setup
+
+#+begin_src emacs-lisp
+  (use-package evil
+    :init
+    (setq evil-want-integration t)
+    (setq evil-want-keybinding nil)
+    (setq evil-want-C-u-scroll t)
+    (setq evil-want-C-u-delete t)
+    (setq evil-want-C-i-jump t)
+    :config
+    (evil-mode 1)
+    (evil-set-undo-system 'undo-redo)
+
+    (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+    (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
+
+    (evil-global-set-key 'motion "j" 'evil-next-visual-line)
+    (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
+
+    (evil-set-initial-state 'messages-buffer-mode 'normal)
+    (evil-set-initial-state 'dashboard-mode 'normal))
+#+end_src
+
+* Use Evil for many different other plugins
+
+#+begin_src emacs-lisp
+  (use-package evil-collection
+    :after evil
+    :config
+    (evil-collection-init))
+#+end_src
+
+* Evil commenting
+
+#+begin_src emacs-lisp
+  (use-package evil-commentary
+    :after evil
+    :config
+    (evil-commentary-mode))
+#+end_src
+
+* Alignment
+
+#+begin_src emacs-lisp
+  (use-package evil-lion
+    :after evil
+    :config
+    (setq evil-lion-left-align-key (kbd "gl"))
+    (setq evil-lion-right-align-key (kbd "gL"))
+    (evil-lion-mode))
+#+end_src
+
+* org-mode enhancement
+
+#+begin_src emacs-lisp
+  (use-package evil-org
+    :after evil
+    :hook (org-mode . (lambda () evil-org-mode))
+    :config
+    (require 'evil-org-agenda)
+    (evil-org-agenda-set-keys))
+#+end_src
+
+
+* Preview registers
+
+#+begin_src emacs-lisp
+  (use-package evil-owl
+    :config
+    (setq evil-owl-max-string-length 500)
+    (add-to-list 'display-buffer-alist
+                 '("*evil-owl*"
+                   (display-buffer-in-side-window)
+                   (side . bottom)
+                   (window-height . 0.3)))
+    (evil-owl-mode))
+#+end_src
+
+* Change surroundings
+
+#+begin_src emacs-lisp
+  (use-package evil-surround
+    :config
+    (global-evil-surround-mode 1))
+#+end_src

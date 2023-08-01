@@ -1,0 +1,65 @@
+#+TITLE: Behavior Enhancements
+#+AUTHOR: Wenhan Zhu
+
+Settings related to enhancing the functionality of emacs. Mostly misc configurations.
+
+* Keep temp files out of the way
+
+#+begin_src emacs-lisp
+  (use-package no-littering
+    :init
+    (setq no-littering-etc-directory (expand-file-name "etc/" user-emacs-directory))
+    (setq no-littering-var-directory (expand-file-name "var/" user-emacs-directory))
+    :custom
+    (auto-save-file-name-transforms
+     `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
+#+end_src
+
+* Better Undo
+
+#+begin_src emacs-lisp
+  (use-package vundo)
+  (cz/leader-keys
+    "tu" 'vundo)
+#+end_src
+
+* Auto saving enhancement
+
+#+begin_src emacs-lisp
+  (use-package super-save
+    :config
+    (super-save-mode +1)
+    (setq super-save-auto-save-when-idle t)
+    ;; disable built-in autosave
+    (setq auto-save-default nil))
+#+end_src
+
+* Helper utilities
+
+#+begin_src emacs-lisp
+  (use-package crux)
+#+end_src
+
+* Smart input method switching
+
+#+begin_src emacs-lisp
+  (use-package sis
+    :config
+    ;; 1033 is English
+    ;; 2050 is Chinese
+    (when cz/windows-p
+      (sis-ism-lazyman-config "1033" "2052" 'im-select))
+    (sis-global-respect-mode t)
+    (sis-global-context-mode t)
+    (sis-global-inline-mode t))
+#+end_src
+
+* Improved help commands
+
+#+begin_src emacs-lisp
+  (use-package helpful
+    :bind
+    ("C-c C-d" . helpful-at-point)
+    ([remap describe-command] . helpful-command)
+    ([remap describe-key] . helpful-key))
+#+end_src

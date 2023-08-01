@@ -1,0 +1,16 @@
+#+TITLE: Config for languages that are short and small
+#+AUTHOR: Wenhan Zhu
+
+* Markdown
+
+#+begin_src emacs-lisp
+  (use-package markdown-mode
+    :commands (markdown-mode gfm-mode))
+#+end_src
+
+
+* Lua
+
+#+begin_src emacs-lisp
+  (use-package lua-mode)
+#+end_src

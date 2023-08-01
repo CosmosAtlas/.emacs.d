@@ -1,0 +1,142 @@
+#+TITLE: Appearances
+#+AUTHOR: Wenhan Zhu
+
+Settings related to the appearances of Emacs
+
+* Highlight trailing whitespaces
+#+begin_src emacs-lisp
+  (setq-default show-trailing-whitespace t)
+  (dolist (hook '(special-mode-hook
+                  term-mode-hook
+                  eshell-mode-hook
+                  comint-mode-hook
+                  elfeed-search-update-hook
+                  elfeed-show-mode-hook
+                  compilation-mode-hook
+                  minibuffer-setup-hook))
+    (add-hook hook
+              (lambda () (setq show-trailing-whitespace nil))))
+#+end_src
+
+* Font configuration
+
+Use custom fontset to customize the display of fonts
+
+#+begin_src emacs-lisp
+  (defun cz/custom-fontset (font-family registry-name)
+    (create-fontset-from-fontset-spec
+     (font-xlfd-name
+      ;; only create a font-spec when the font is available, otherwise use default
+      (if (member font-family (font-family-list))
+                  (font-spec :family font-family
+                             :registry registry-name)
+                  (font-spec :registry registry-name)))))
+
+  ;; avoid problems with emacs running in terminal
+  (when (display-graphic-p)
+
+    (set-face-attribute 'default nil :font "Sarasa Term SC" :height 130)
+
+    ;; [fixme] work around for mixed-pitch-mode
+    (dolist (charset '(kana han symbol cjk-misc bopomofo))
+      (set-fontset-font (frame-parameter nil 'font)
+  		      charset
+  		      (font-spec :family "Sarasa Term SC")))
+
+    (cz/custom-fontset "Iosevka Etoile" "fontset-myvariable")
+    (cz/custom-fontset "Iosevka SS08" "fontset-mypitch")
+
+    (set-fontset-font
+     "fontset-myvariable"
+     'han (font-spec :family "FZPingXianYaSong-R-GBK"))
+
+    (set-fontset-font
+     "fontset-myvariable"
+     'symbol (font-spec :family "IosevkaTerm NF"))
+
+    (set-fontset-font
+     "fontset-mypitch"
+     'han (font-spec :family "Sarasa Term SC"))
+
+    (set-fontset-font
+     "fontset-mypitch"
+     'symbol (font-spec :family "IosevkaTerm NF"))
+
+    (set-face-attribute 'variable-pitch nil :fontset "fontset-myvariable" :font "fontset-myvariable" :height 1.0)
+
+    (set-face-attribute 'fixed-pitch nil :fontset "fontset-mypitch" :font "fontset-mypitch" :height 1.0)
+
+    ;; Set larger default font-size on MacOS
+    (if (eq system-type 'darwin) (set-face-attribute 'default nil :height 200))
+    (if (string-equal (system-name) "cosmos-lab") (set-face-attribute 'default nil :height 130)))
+#+end_src
+
+
+* Icons
+#+begin_src emacs-lisp
+  (use-package all-the-icons
+    :if (display-graphic-p))
+#+end_src
+
+* Dashboard
+#+begin_src emacs-lisp
+  (use-package dashboard
+    :config
+    (dashboard-setup-startup-hook)
+    (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*"))))
+#+end_src
+
+* Status line
+
+#+begin_src emacs-lisp
+  (use-package doom-modeline
+    :init (doom-modeline-mode 1))
+#+end_src
+
+* Colorscheme
+
+#+begin_src emacs-lisp
+  (use-package doom-themes
+    :config
+    (setq doom-themes-enable-bold t)
+    (setq doom-themes-enable-italic t)
+    (load-theme 'doom-ayu-light t)
+    (doom-themes-org-config))
+#+end_src
+
+* Rainbow!
+
+#+begin_src emacs-lisp
+  (use-package rainbow-delimiters
+    :hook
+    (prog-mode . rainbow-delimiters-mode))
+#+end_src
+
+* Indent guides
+
+#+begin_src emacs-lisp
+  (use-package highlight-indent-guides
+    :config
+    (setq highlight-indent-guides-method 'column)
+    :hook
+    (prog-mode . highlight-indent-guides-mode))
+#+end_src
+
+
+* Show git signs
+
+#+begin_src emacs-lisp
+  (use-package git-gutter
+    :init
+    ;; avoid symbol not defined void errors
+    (setq global-linum-mode nil)
+    :config
+    (global-git-gutter-mode +1))
+
+  (use-package git-gutter-fringe
+    :after git-gutter
+    :config
+    (define-fringe-bitmap 'git-gutter-fr:added [224] nil nil '(center repeated))
+    (define-fringe-bitmap 'git-gutter-fr:modified [224] nil nil '(center repeated))
+    (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240] nil nil 'bottom))
+#+end_src
