@@ -100,7 +100,7 @@ Use custom fontset to customize the display of fonts
     :config
     (setq doom-themes-enable-bold t)
     (setq doom-themes-enable-italic t)
-    (load-theme 'doom-ayu-light t)
+    (load-theme 'doom-oceanic-next t)
     (doom-themes-org-config))
 #+end_src
 
