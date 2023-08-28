@@ -15,7 +15,6 @@
   (use-package lua-mode)
 #+end_src
 
-
 * Meta LISP
 
 #+begin_src emacs-lisp
@@ -29,4 +28,10 @@
     (lispyville-set-key-theme '(operators c-w additional
                                           additional-movement slurp/barf-cp
                                           prettify)))
+#+end_src
+
+* Python
+
+#+begin_src emacs-lisp
+  (setenv "PYTHONIOENCODING" "UTF-8")
 #+end_src

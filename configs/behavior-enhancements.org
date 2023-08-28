@@ -65,3 +65,13 @@ Settings related to enhancing the functionality of emacs. Mostly misc configurat
     ([remap describe-command] . helpful-command)
     ([remap describe-key] . helpful-key))
 #+end_src
+
+
+* ebuku
+
+#+begin_src emacs-lisp
+  (use-package ebuku
+    :after evil-collection org
+    :init
+    (setq ebuku-database-path (file-truename (concat org-directory "/bookmarks.db"))))
+#+end_src
