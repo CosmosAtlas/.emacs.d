@@ -57,12 +57,12 @@
     :after yasnippet)
 
   ;; cape integration
-  (use-package cape-yasnippet
-    :straight (cape-yasnippet :type git
+  (use-package yasnippet-capf
+    :straight (yasnippet-capf :type git
                               :host github
-                              :repo "elken/cape-yasnippet")
+                              :repo "elken/yasnippet-capf")
     :config
-    (add-to-list 'completion-at-point-functions #'cape-yasnippet))
+    (add-to-list 'completion-at-point-functions #'yasnippet-capf))
 
   (cz/leader-keys
     "yt" 'yas-describe-tables
