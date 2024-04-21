@@ -18,4 +18,6 @@
 
   (cz/leader-keys
     "p" 'projectile-command-map)
+
+  (use-package ag)
 #+end_src

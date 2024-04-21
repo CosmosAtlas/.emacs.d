@@ -42,20 +42,6 @@ Settings related to enhancing the functionality of emacs. Mostly misc configurat
   (use-package crux)
 #+end_src
 
-* Smart input method switching
-
-#+begin_src emacs-lisp
-  (use-package sis
-    :config
-    ;; 1033 is English
-    ;; 2050 is Chinese
-    (when cz/windows-p
-      (sis-ism-lazyman-config "1033" "2052" 'im-select))
-    (sis-global-respect-mode t)
-    (sis-global-context-mode t)
-    (sis-global-inline-mode t))
-#+end_src
-
 * Improved help commands
 
 #+begin_src emacs-lisp
@@ -74,4 +60,15 @@ Settings related to enhancing the functionality of emacs. Mostly misc configurat
     :after evil-collection org
     :init
     (setq ebuku-database-path (file-truename (concat org-directory "/bookmarks.db"))))
+#+end_src
+
+* Beancount
+
+#+begin_src emacs-lisp
+  (use-package beancount
+    :straight (beancount :type git
+                          :host github
+                          :repo "beancount/beancount-mode")
+    :config
+    (add-to-list 'auto-mode-alist '("\\.beancount\\'" . beancount-mode)))
 #+end_src
