@@ -48,7 +48,7 @@ Use custom fontset to customize the display of fonts
 
     (set-fontset-font
      "fontset-myvariable"
-     'han (font-spec :family "FZPingXianYaSong-R-GBK"))
+     'han (font-spec :family "Sarasa Term SC"))
 
     (set-fontset-font
      "fontset-myvariable"

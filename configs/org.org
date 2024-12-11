@@ -182,10 +182,6 @@ Setting up emacsql backend
           '(("d" "default" plain "%?"
              :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
                                 "#+title: ${title}\n")
-             :unnarrowed t)
-            ("r" "bibliography reference" plain "%?"
-             :target
-             (file+head "references/${citekey}.org" "#+title: ${title}\n")
              :unnarrowed t)))
     ;; display buffer
     (add-to-list 'display-buffer-alist
